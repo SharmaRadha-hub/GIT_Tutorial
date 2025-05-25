@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Git & GitHub: A Tutorial</title>
+    <link rel="icon" type="image/png" href="https://via.placeholder.com/32/000000/FFFFFF?text=G">
+    <style>
+        /* --- CSS Goes Here --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto+Mono:wght@400;600&display=swap');
+
+        :root {
+            --primary-color: #0056b3; /* Darker blue for accents */
+            --secondary-color: #007bff; /* Bright blue */
+            --accent-color: #28a745; /* Green for success/buttons */
+            --bg-color: #f8f9fa; /* Light background */
+            --text-color: #343a40; /* Dark text */
+            --light-text-color: #6c757d; /* Lighter text */
+            --border-color: #dee2e6; /* Light gray border */
+            --sidebar-bg: #343a40; /* Dark sidebar */
+            --sidebar-text: #f8f9fa; /* Light text on sidebar */
+            --code-bg: #e9ecef; /* Light gray for code blocks */
+            --code-text: #c0392b; /* Reddish for commands */
+            --header-bg: #ffffff; /* White header */
+            --footer-bg: #343a40; /* Dark footer */
+            --footer-text: #e9ecef; /* Light text on footer */
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* --- Global Elements --- */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--primary-color);
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 1em;
+        }
+
+        a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        ul {
+            list-style-type: disc;
+            padding-left: 25px;
+            margin-bottom: 1em;
+        }
+
+        ol {
+            list-style-type: decimal;
+            padding-left: 25px;
+            margin-bottom: 1em;
+        }
+
+        .note {
+            background-color: #fff3cd; /* Light yellow */
+            border-left: 5px solid #ffc107; /* Orange border */
+            padding: 10px 15px;
+            margin: 1.5em 0;
+            color: #664d03; /* Dark yellow text */
+            border-radius: 4px;
+        }
+
+        /* --- Code Blocks --- */
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            margin-bottom: 1.5em;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        code {
+            font-family: 'Roboto Mono', monospace;
+            color: var(--code-text);
+            font-size: 0.9em;
+            white-space: pre-wrap; /* Ensure code wraps */
+        }
+
+        pre code {
+            display: block; /* Make sure code takes full width inside pre */
+        }
+
+        /* Highlight specific commands */
+        code.bash {
+            color: #0056b3; /* A slightly different color for bash commands */
+        }
+        code.text {
+            color: #495057; /* Standard text color for generic examples */
+        }
+
+        .demo-description {
+            font-style: italic;
+            color: var(--light-text-color);
+            margin-top: -0.8em;
+            margin-bottom: 1.5em;
+            font-size: 0.9em;
+            padding-left: 10px;
+            border-left: 3px solid var(--border-color);
+        }
+
+        /* --- Buttons --- */
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* --- Cover Page --- */
+        .cover-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), #4CAF50); /* Gradient background */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-direction: column;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .cover-page.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cover-content {
+            max-width: 800px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.4); /* Slightly transparent background */
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: fadeInScale 1s ease-out forwards;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .cover-page h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .cover-page .poetic-line {
+            font-style: italic;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .cover-page .names {
+            font-weight: 600;
+            margin-top: 30px;
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .cover-page .start-btn {
+            margin-top: 40px;
+            padding: 15px 30px;
+            font-size: 1.3em;
+            background-color: var(--accent-color);
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cover-page .start-btn:hover {
+            background-color: #218838;
+            transform: translateY(-3px);
+        }
+
+        /* --- Audio Controls --- */
+        .audio-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .audio-controls .control-btn {
+            padding: 8px 12px;
+            font-size: 0.9em;
+            background-color: var(--primary-color);
+        }
+
+        .audio-controls .volume-slider {
+            width: 80px;
+            cursor: pointer;
+        }
+
+        /* --- Main Tutorial Layout --- */
+        .tutorial-app {
+            display: flex;
+            min-height: 100vh;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .tutorial-app.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            padding: 20px;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0; /* Prevent sidebar from shrinking */
+            transition: width 0.3s ease;
+            position: relative;
+            overflow-y: auto; /* Enable scrolling for long content */
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar-toggle-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+
+        .sidebar.collapsed .sidebar-toggle-btn {
+            right: 5px; /* Adjust button position when collapsed */
+        }
+
+        .sidebar-nav {
+            margin-top: 40px; /* Space for toggle button */
+        }
+
+        .collapsible-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .collapsible-menu li {
+            margin-bottom: 8px;
+        }
+
+        .collapsible-menu li a {
+            display: block;
+            padding: 8px 15px;
+            border-radius: 5px;
+            color: var(--sidebar-text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            white-space: nowrap; /* Prevent wrapping in menu */
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .collapsible-menu li a:hover,
+        .collapsible-menu li a.active {
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar.collapsed .collapsible-menu li a {
+            font-size: 0; /* Hide text */
+            padding: 8px 0; /* Collapse padding */
+            width: 40px; /* Fix width for icon */
+            text-align: center;
+        }
+
+        .sidebar.collapsed .collapsible-menu li a:before {
+            content: "•"; /* Dot or simple icon */
+            font-size: 1rem;
+            display: inline-block;
+            vertical-align: middle;
+            width: 100%;
+        }
+
+
+        .menu-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: #495057; /* Slightly lighter dark */
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: background-color 0.3s ease;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .menu-title:hover {
+            background-color: #5a6268;
+        }
+
+        .sidebar.collapsed .menu-title {
+            font-size: 0;
+            padding: 10px;
+            width: 40px;
+            height: 20px; /* Adjust height to fit dot */
+            text-align: center;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .menu-title .arrow {
+            display: none; /* Hide arrow when collapsed */
+        }
+        .sidebar.collapsed .menu-title::before {
+            content: "+"; /* Or icon for menu title */
+            font-size: 1.2rem;
+            display: inline-block;
+        }
+
+
+        .submenu {
+            list-style: none;
+            padding: 0;
+            margin-top: 5px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .submenu.expanded {
+            max-height: 300px; /* Adjust based on max expected content height */
+            overflow-y: auto; /* Enable scroll if content overflows */
+        }
+
+        .submenu li a {
+            padding-left: 30px; /* Indent submenu items */
+            font-size: 0.9em;
+        }
+
+        .sidebar.collapsed .submenu {
+            max-height: 0 !important; /* Force collapse when sidebar is collapsed */
+        }
+
+        /* Content Area */
+        .content-area {
+            flex-grow: 1;
+            padding: 20px 40px;
+            background-color: #fff;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            overflow-y: auto; /* Enable scrolling for content */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .content-display {
+            flex-grow: 1;
+            min-height: 400px; /* Minimum height to push pagination down */
+        }
+
+        .tutorial-section {
+            display: none; /* Hidden by default, shown by JS */
+            padding-bottom: 20px; /* Space before pagination */
+        }
+
+        .tutorial-section.active {
+            display: block;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .pagination-btn {
+            min-width: 120px;
+        }
+
+        /* Quiz Section */
+        #quiz-section .form-group {
+            margin-bottom: 15px;
+        }
+
+        #quiz-section label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        #quiz-section input[type="text"],
+        #quiz-section input[type="email"] {
+            width: calc(100% - 22px); /* Account for padding and border */
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .quiz-questions h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.15em;
+            color: var(--text-color);
+        }
+
+        .quiz-questions label {
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .quiz-questions input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.2); /* Make radio buttons a bit bigger */
+            cursor: pointer;
+        }
+
+        .submit-quiz-btn {
+            background-color: var(--accent-color);
+            margin-top: 20px;
+        }
+
+        .submit-quiz-btn:hover {
+            background-color: #218838;
+        }
+
+        .quiz-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #e9f7ef; /* Light green */
+            border: 1px solid #28a745;
+            color: #155724;
+            font-weight: 600;
+            display: none; /* Hidden until quiz submitted */
+        }
+
+        .quiz-result.show {
+            display: block;
+        }
+
+        .download-btn {
+            margin-top: 15px;
+            background-color: #6f42c1; /* Purple */
+        }
+
+        .download-btn:hover {
+            background-color: #5b35a1;
+        }
+
+        /* Interview Questions (FAQ) */
+        .faq-container {
+            margin-top: 20px;
+        }
+
+        .faq-item {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .faq-item h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .faq-item .answer {
+            color: var(--text-color);
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 20px 40px;
+            text-align: center;
+            margin-top: auto; /* Push footer to bottom */
+        }
+
+        .footer p {
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .feedback-section {
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 20px;
+        }
+
+        .feedback-section h3 {
+            color: var(--footer-text);
+            margin-bottom: 15px;
+        }
+
+        #feedbackForm textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 0.95em;
+            resize: vertical;
+            background-color: #f0f2f5;
+            color: var(--text-color);
+        }
+
+        .feedback-submit-btn {
+            background-color: var(--primary-color);
+            margin-top: 10px;
+        }
+
+        .feedback-submit-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .feedback-display {
+            margin-top: 20px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+
+        .feedback-display h4 {
+            color: var(--footer-text);
+            margin-bottom: 10px;
+        }
+
+        .feedback-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .tutorial-app {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                overflow-y: visible;
+            }
+            .sidebar.collapsed {
+                width: 100%;
+            }
+            .sidebar-toggle-btn {
+                position: static; /* Remove fixed position */
+                margin-bottom: 15px;
+                display: block;
+                width: calc(100% - 30px);
+            }
+            .sidebar-nav {
+                margin-top: 0;
+            }
+            .sidebar.collapsed .collapsible-menu li a,
+            .sidebar.collapsed .menu-title {
+                font-size: 0.9em;
+                padding: 8px 15px;
+                width: auto;
+                text-align: left;
+                justify-content: flex-start;
+            }
+            .sidebar.collapsed .collapsible-menu li a:before,
+            .sidebar.collapsed .menu-title::before {
+                content: ""; /* Remove dot/plus */
+                display: none;
+            }
+            .sidebar.collapsed .menu-title .arrow {
+                display: inline-block; /* Show arrow */
+            }
+            .sidebar.collapsed .collapsible-menu,
+            .sidebar.collapsed .submenu {
+                max-height: 0 !important; /* Force collapse */
+                padding-left: 0;
+            }
+            .content-area {
+                padding: 20px;
+            }
+            .audio-controls {
+                top: auto;
+                bottom: 20px;
+                left: 20px;
+                right: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="backgroundMusic" loop>
+        <source src="file:///C:/Users/radhara/PycharmProjects/RadhaProjects/Tutorial/Git/background-music-calm-soft-340445.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="audio-controls">
+        <button id="playPauseBtn" class="control-btn">▶️ Play</button>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" class="volume-slider">
+    </div>
+
+    <div id="coverPage" class="cover-page active">
+        <div class="cover-content">
+            <h1>Mastering the Tides of Code: Git and GitHub</h1>
+            <p class="poetic-line">
+                *In the realm where lines of logic intertwine,<br>
+                And creations of thought brilliantly shine,<br>
+                A system stands, both mighty and grand,<br>
+                To track each change, with a guiding hand.*
+            </p>
+            <p class="poetic-line">
+                *For **Radha **, the architect of digital dreams,<br>
+                Whose vision brightly gleams,<br>
+                May this guide unveil the secrets profound,<br>
+                Where every commit, a new verse is found.*
+            </p>
+            <p class="names">Curated with care for Radha  by: Radh Rani</p>
+            <button id="startTutorialBtn" class="start-btn">Start Tutorial</button>
+        </div>
+    </div>
+
+    <div id="tutorialApp" class="tutorial-app">
+        <aside class="sidebar">
+            <button class="sidebar-toggle-btn" id="sidebarToggleBtn">☰</button>
+            <nav class="sidebar-nav">
+                <ul id="sidebarIndex" class="collapsible-menu">
+                    <li><a href="#" data-section="home" class="active">🏠 Home</a></li>
+                    <li>
+                        <span class="menu-title" data-target="intro-section">1. Introduction to Version Control <span class="arrow">▼</span></span>
+                        <ul class="submenu" id="intro-section">
+                            <li><a href="#" data-section="intro-vcs">1.1 What is VCS?</a></li>
+                            <li><a href="#" data-section="intro-git">1.2 Why Git?</a></li>
+                            <li><a href="#" data-section="intro-github">1.3 Why GitHub?</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="menu-title" data-target="setup-section">2. Setting Up Git <span class="arrow">▼</span></span>
+                        <ul class="submenu" id="setup-section">
+                            <li><a href="#" data-section="setup-install">2.1 Installation</a></li>
+                            <li><a href="#" data-section="setup-config">2.2 Initial Configuration</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="menu-title" data-target="workflow-section">3. The Git Workflow: Local Essentials <span class="arrow">▼</span></span>
+                        <ul class="submenu" id="workflow-section">
+                            <li><a href="#" data-section="workflow-states">3.1 Git States</a></li>
+                            <li><a href="#" data-section="workflow-init">3.2 `git init`</a></li>
+                            <li><a href="#" data-section="workflow-status">3.3 `git status`</a></li>
+                            <li><a href="#" data-section="workflow-add">3.4 `git add`</a></li>
+                            <li><a href="#" data-section="workflow-commit">3.5 `git commit`</a></li>
+                            <li><a href="#" data-section="workflow-log">3.6 `git log`</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="menu-title" data-target="branching-section">4. Branching and Merging: Navigating Code Paths <span class="arrow">▼</span></span>
+                        <ul class="submenu" id="branching-section">
+                            <li><a href="#" data-section="branching-understand">4.1 Understanding Branches</a></li>
+                            <li><a href="#" data-section="branching-list">4.2 `git branch`</a></li>
+                            <li><a href="#" data-section="branching-create">4.3 Creating Branches</a></li>
+                            <li><a href="#" data-section="branching-switch">4.4 Switching Branches</a></li>
+                            <li><a href="#" data-section="branching-merge">4.5 Merging Branches</a></li>
+                            <li><a href="#" data-section="branching-conflict">4.6 Merge Conflicts</a></li>
+                            <li><a href="#" data-section="branching-delete">4.7 Deleting Branches</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="menu-title" data-target="remote-section">5. Working with Remote Repos (GitHub) <span class="arrow">▼</span></span>
+                        <ul class="submenu" id="remote-section">
+                            <li><a href="#" data-section="remote-create">5.1 Create GitHub Repo</a></li>
+                            <li><a href="#" data-section="remote-connect">5.2 `git remote`</a></li>
+                            <li><a href="#" data-section="remote-push">5.3 `git push`</a></li>
+                            <li><a href="#" data-section="remote-pat">5.4 Personal Access Tokens</a></li>
+                            <li><a href="#" data-section="remote-pull">5.5 `git pull`</a></li>
+                            <li><a href="#" data-section="remote-clone">5.6 `git clone`</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#" data-section="interview-questions">📋 Interview Questions</a></li>
+                    <li><a href="#" data-section="quiz-section">❓ Take the Quiz!</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+            <header class="content-header">
+                <h2 id="sectionTitle"></h2>
+            </header>
+
+            <div id="contentDisplay" class="content-display">
+                <section id="home" class="tutorial-section active">
+                    <h1>Welcome to Your Git & GitHub Mastery Guide!</h1>
+                    <p>Hello Radha ! This interactive tutorial is designed to equip you with the fundamental knowledge and practical skills to confidently use **Git** for version control and **GitHub** for collaborative development and tech content creation.</p>
+                    <p>Navigate through the sections using the sidebar on the left. Each section covers a key concept, includes command demonstrations, and offers practical scenarios. Test your knowledge with the quiz and explore common interview questions.</p>
+                    <h3>Why Git & GitHub for you?</h3>
+                    <ul>
+                        <li><strong>For Coding:</strong> You'll be able to track every line of code you write, collaborate on projects seamlessly with others (or even with yourself across different machines!), easily revert mistakes, and manage different features in an organized way.</li>
+                        <li><strong>For Tech Content:</strong> Imagine having version control for your articles, blog posts, and documentation. You can track revisions, collaborate on drafts with me, and ensure consistency across your entire content portfolio. No more "final_final_v2_new.docx"!</li>
+                    </ul>
+                    <p>Let's dive in and unlock the power of modern development workflows together!</p>
+                </section>
+
+                <section id="intro-vcs" class="tutorial-section">
+                    <h2>1.1 What is Version Control?</h2>
+                    <p>In the world of creating software or even writing articles, changes are constant. A **Version Control System (VCS)** is a smart tool that helps you manage and track these changes to your files and directories over time. Think of it as a super-powered "undo" button combined with a detailed history book for your entire project.</p>
+                    <p>With a VCS, you can:</p>
+                    <ul>
+                        <li>**Time Travel:** Easily revert your project to any previous state if something goes wrong or you need to see an older version.</li>
+                        <li>**Know Who, What, When, Why:** See precisely who made what changes, when they made them, and most importantly, why.</li>
+                        <li>**Collaborate Without Chaos:** Work on the same project with multiple people (like you and me!) without accidentally overwriting each other's work.</li>
+                        <li>**Experiment Fearlessly:** Create separate "branches" to try out new ideas or features without risking your main, stable codebase.</li>
+                    </ul>
+                </section>
+
+                <section id="intro-git" class="tutorial-section">
+                    <h2>1.2 Why Git?</h2>
+                    <p>Among the many VCS tools, **Git** stands out as the most popular and powerful **Distributed Version Control System (DVCS)**. "Distributed" is a key term here: it means that *every* developer working on a project with Git has a complete, full copy of the entire project's history on their local machine, not just the latest version.</p>
+                    <p>This distributed nature offers fantastic advantages:</p>
+                    <ul>
+                        <li>**Work Offline:** You can make commits and view the entire project history even if you don't have an internet connection.</li>
+                        <li>**Lightning Fast:** Most operations like committing, branching, or viewing history are performed locally, making them incredibly quick.</li>
+                        <li>**Robust and Resilient:** If a central server were to fail (like GitHub temporarily going down), every developer still has a complete backup of the project's history.</li>
+                    </ul>
+                    <p>Git was originally created by Linus Torvalds (the brilliant mind behind Linux) in 2005.</p>
+                </section>
+
+                <section id="intro-github" class="tutorial-section">
+                    <h2>1.3 Why GitHub?</h2>
+                    <p>While **Git** is the powerful tool for version control that lives on your computer, **GitHub** is a popular web-based platform that acts as a central home for your Git repositories. It's often described as a "social network for developers."</p>
+                    <p>GitHub provides a suite of features that enhance Git's capabilities, especially for collaboration:</p>
+                    <ul>
+                        <li>**Cloud Storage:** A reliable and accessible place in the cloud to store your Git repositories, making your code available from anywhere.</li>
+                        <li>**Collaboration Power Tools:** Features like **Pull Requests** (for code reviews and merging), **Issue Tracking** (for managing tasks and bugs), and discussion forums that make teamwork much smoother.</li>
+                        <li>**Global Community:** A massive platform to discover and contribute to open-source projects, showcase your own work, and connect with other developers worldwide.</li>
+                    </ul>
+                    <p class="note">**Key takeaway:** Think of **Git** as the engine that manages your project's versions locally, and **GitHub** as the popular online platform that hosts your projects and makes collaboration effortless. You can use Git without GitHub, but you can't use GitHub without Git!</p>
+                </section>
+
+                <section id="setup-install" class="tutorial-section">
+                    <h2>2.1 Installation</h2>
+                    <p>Before you can start using Git, you need to install it on your computer. It's a straightforward process:</p>
+                    <h3>For Windows:</h3>
+                    <p>Download the official Git installer from the Git SCM website. Run the executable and follow the prompts. The default options are usually fine for most users.</p>
+                    <pre><code>1. Go to <a href="https://git-scm.com/downloads/win" target="_blank">git-scm.com/downloads/win</a>.
+2. Download and run the installer.
+3. Follow the installation wizard.</code></pre>
+                    <h3>For macOS:</h3>
+                    <p>The easiest way is often through Homebrew, a popular package manager for macOS. If you don't have Homebrew, you can install it first, then install Git.</p>
+                    <pre><code># Using Homebrew (recommended)
+brew install git
+
+# Alternatively, download from the official site
+<a href="https://git-scm.com/downloads/mac" target="_blank">git-scm.com/downloads/mac</a></code></pre>
+                    <h3>For Linux (Debian/Ubuntu based systems, like Ubuntu or Mint):</h3>
+                    <p>You can typically install Git using your system's package manager.</p>
+                    <pre><code>sudo apt-get update
+sudo apt-get install git</code></pre>
+                    <p>Once installed, open your **terminal** or **Git Bash** (on Windows) and verify that Git is working correctly:</p>
+                    <pre><code class="bash">git --version</code></pre>
+                    <p class="demo-description">This command should display the installed Git version, confirming it's ready to go!</p>
+                </section>
+
+                <section id="setup-config" class="tutorial-section">
+                    <h2>2.2 Initial Configuration</h2>
+                    <p>After installing Git, you need to tell it who you are. This information (your name and email) will be embedded in every commit you make. It's how Git tracks who made which changes.</p>
+                    <p>Use these commands to set your global user name and email. The `--global` flag ensures these settings apply to all your Git repositories on this computer.</p>
+                    <pre><code class="bash">git config --global user.name "Radha "
+git config --global user.email "Radha .agrahari@example.com"</code></pre>
+                    <p class="demo-description">If you want to use your name, Radh Rani, for specific projects, you can run these commands *without* `--global` inside that project's folder. For instance: `git config user.name "Radh Rani"`</p>
+                    <p>To verify that your settings have been applied correctly, you can list all your Git configurations:</p>
+                    <pre><code class="bash">git config --list</code></pre>
+                    <p class="demo-description">You should see `user.name` and `user.email` among the listed configurations.</p>
+                </section>
+
+                <section id="workflow-states" class="tutorial-section">
+                    <h2>3.1 Git States: Working Directory, Staging Area, Repository</h2>
+                    <p>Git manages your project's files through three core states. Understanding these is fundamental to mastering Git:</p>
+                    <ul>
+                        <li>
+                            <p><strong>Working Directory:</strong> This is the actual set of files you see and work with on your computer. When you open a project folder, modify a file, or create a new one, you're interacting with the working directory.</p>
+                        </li>
+                        <li>
+                            <p><strong>Staging Area (or Index):</strong> Think of this as a temporary "waiting area" or a "pre-commit" zone. After you make changes in your working directory, you use a Git command to select which specific modifications you want to include in your *next* commit. Only changes placed in the staging area will be part of the upcoming snapshot.</p>
+                        </li>
+                        <li>
+                            <p><strong>Git Repository (Local Repository):</strong> This is where Git stores the complete history of your project. It's a hidden folder named `.git` inside your project directory. When you "commit" changes, they are permanently recorded into this local repository as a snapshot.</p>
+                        </li>
+                    </ul>
+                </section>
+
+                <section id="workflow-init" class="tutorial-section">
+                    <h2>3.2 Initializing a Repository (`git init`)</h2>
+                    <p>To tell Git that you want it to start tracking changes for a new project, you use the `git init` command. This transforms an ordinary folder into a Git repository.</p>
+                    <h3>Demo: Creating your first Git repository</h3>
+                    <p>Let's create a new folder and make it a Git-tracked project:</p>
+                    <pre><code class="bash"># Step 1: Create a new directory for your project
+mkdir my_first_tech_project
+
+# Step 2: Navigate into your new project directory
+cd my_first_tech_project
+
+# Step 3: Initialize the Git repository
+git init</code></pre>
+                    <p class="demo-description">You'll see a message like `Initialized empty Git repository in /path/to/my_first_tech_project/.git/`. This command creates the crucial, hidden `.git` folder. This folder is where Git stores all its version control magic, so don't delete it!</p>
+                </section>
+
+                <section id="workflow-status" class="tutorial-section">
+                    <h2>3.3 Checking Status (`git status`)</h2>
+                    <p>The `git status` command is your most frequently used command and your best friend in Git. It tells you the current state of your working directory and staging area, letting you know:</p>
+                    <ul>
+                        <li>Which files are new and untracked by Git.</li>
+                        <li>Which files you've modified but haven't yet staged.</li>
+                        <li>Which changes are currently in the staging area, ready for your next commit.</li>
+                    </ul>
+                    <h3>Demo: Seeing your project's status</h3>
+                    <p>After `git init`, run:</p>
+                    <pre><code class="bash">git status</code></pre>
+                    <p class="demo-description">
+                        **Expected Output:**
+                        <pre><code>On branch master
+
+No commits yet
+
+nothing to commit (create/copy files and use "git add" to track)</code></pre>
+                        This tells you you're on the `master` branch (the default main line of development) and there's nothing to commit yet.
+                    </p>
+                    <p>Now, let's create a simple file inside your `my_first_tech_project` folder:</p>
+                    <pre><code class="bash">touch my_first_article.md</code></pre>
+                    <p>Then, check the status again:</p>
+                    <pre><code class="bash">git status</code></pre>
+                    <p class="demo-description">
+                        **Expected Output:**
+                        <pre><code>On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+    my_first_article.md
+
+nothing added to commit but untracked files present (use "git add" to track)</code></pre>
+                        Git now sees `my_first_article.md` as an **Untracked file**. This means it's a new file that Git hasn't started monitoring yet.
+                    </p>
+                </section>
+
+                <section id="workflow-add" class="tutorial-section">
+                    <h2>3.4 Adding Files (`git add`)</h2>
+                    <p>Once you've created new files or made changes to existing ones, you need to add these modifications to the **staging area**. This is a crucial intermediate step that tells Git, "Hey, I want to include *these specific changes* in my next snapshot (commit)."</p>
+                    <h3>Demo: Staging your changes</h3>
+                    <p>Let's stage the `my_first_article.md` file we just created:</p>
+                    <pre><code class="bash">git add my_first_article.md</code></pre>
+                    <p>Now, check the status again to see the effect:</p>
+                    <pre><code class="bash">git status</code></pre>
+                    <p class="demo-description">
+                        **Expected Output:**
+                        <pre><code>On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached &lt;file&gt;..." to unstage)
+    new file: my_first_article.md</code></pre>
+                        The file is now listed under "Changes to be committed," meaning it's in the **staging area** and ready to be saved permanently.
+                    </p>
+                    <p><strong>Common `git add` usages:</strong></p>
+                    <ul>
+                        <li>`git add <filename>`: Stages a specific file (e.g., `git add index.html`).</li>
+                        <li>`git add .`: Stages *all* changes (including new files, modified files, and deletions) in the current directory and all its subdirectories. Use this with a bit of caution in large projects, as it might stage things you didn't intend to.</li>
+                        <li>`git add -u`: Stages all modifications and deletions of *tracked* files, but it will *not* stage new, untracked files.</li>
+                    </ul>
+                </section>
+
+                <section id="workflow-commit" class="tutorial-section">
+                    <h2>3.5 Committing Changes (`git commit`)</h2>
+                    <p>A "commit" is the core action in Git. It's like taking a permanent photograph or snapshot of your project's state *exactly as it is in your staging area*. This snapshot is then saved into your local Git repository.</p>
+                    <p>Every commit requires a **commit message**. This message is incredibly important, as it helps you and anyone else looking at the project's history understand *what* changes were made and, more importantly, *why* they were made.</p>
+                    <h3>Demo: Saving your first snapshot</h3>
+                    <p>Let's commit the staged `my_first_article.md` file:</p>
+                    <pre><code class="bash">git commit -m "Initial draft: Setting up the Git tutorial article"</code></pre>
+                    <p class="demo-description">
+                        The `-m` flag allows you to provide your commit message directly in the command.
+                        **Expected Output:**
+                        <pre><code>[master (root-commit) 4b2f3a1] Initial draft: Setting up the Git tutorial article
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 my_first_article.md</code></pre>
+                        The `4b2f3a1` (it will be different for you) is a unique **commit hash** – a short identifier for this specific snapshot.
+                    </p>
+                    <p>Now that you've committed, check the status again:</p>
+                    <pre><code class="bash">git status</code></pre>
+                    <p class="demo-description">
+                        **Expected Output:**
+                        <pre><code>On branch master
+nothing to commit, working tree clean</code></pre>
+                        This means your working directory is clean, and all your changes are safely stored in your local Git repository.
+                    </p>
+                    <p><strong>Tips for Good Commit Messages:</strong></p>
+                    <ul>
+                        <li>Start with a concise, imperative summary (e.g., "Add user authentication," not "Added user authentication"). Keep the first line brief (ideally under 50-72 characters).</li>
+                        <li>If more detail is needed, add a blank line after the summary, then write a more comprehensive explanation.</li>
+                        <li>Focus on *why* the change was made, not just *what* was changed. This provides valuable context for future you and collaborators.</li>
+                    </ul>
+                </section>
+
+                <section id="workflow-log" class="tutorial-section">
+                    <h2>3.6 Viewing History (`git log`)</h2>
+                    <p>The `git log` command is your window into the past of your project. It displays a chronological list of all the commits that have been made in your repository, from the newest to the oldest.</p>
+                    <h3>Demo: Reviewing your project's history</h3>
+                    <p>To see a detailed list of all your commits:</p>
+                    <pre><code class="bash">git log</code></pre>
+                    <p class="demo-description">
+                        **Expected Output (similar to):**
+                        <pre><code>commit 4b2f3a1e9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f (HEAD -> master)
+Author: Radha  &lt;Radha .agrahari@example.com&gt;
+Date:   Fri May 24 15:30:00 2024 +0530
+
+    Initial draft: Setting up the Git tutorial article</code></pre>
+                        You'll see the full commit hash, the author's name and email, the date and time of the commit, and your commit message. If you have multiple commits, you'll see them listed one after another.
+                    </p>
+                    <p><strong>Useful `git log` options:</strong></p>
+                    <ul>
+                        <li>`git log --oneline`: Provides a much more compact, one-line summary for each commit, showing just the short hash and the first line of the commit message. This is great for a quick overview.</li>
+                        <li>`git log --graph --oneline --decorate`: A powerful combination that visualizes your branch history as a graph, making it easier to see how branches diverged and merged.</li>
+                    </ul>
+                    <p class="demo-description">While in the `git log` view (which often uses a pager), you can press `q` to quit and return to your terminal prompt.</p>
+                </section>
+
+                <section id="branching-understand" class="tutorial-section">
+                    <h2>4.1 Understanding Branches</h2>
+                    <p>Branches are one of Git's most powerful and frequently used features, central to effective teamwork and experimentation. They allow you to diverge from the main line of development, work on new features or fixes independently, and then integrate those changes back into your main project.</p>
+                    <p>Imagine your project's history as a single, continuous timeline. When you create a branch, you're essentially creating a **new, independent timeline** for your work. Any changes you make and commit on this new timeline will not affect the original main timeline (your `main` or `master` branch) until you explicitly merge them.</p>
+                    <p><strong>Why are branches so vital?</strong></p>
+                    <ul>
+                        <li>**Isolated Feature Development:** You can build an entirely new feature on its own branch without worrying about breaking the existing, stable version of your code.</li>
+                        <li>**Safe Experimentation:** Want to try a radical new idea or a risky fix? Do it on a branch. If it doesn't work out, you can simply discard the branch without impacting your main project.</li>
+                        <li>**Parallel Work:** Multiple team members (like you and me!) can work on different features or tasks simultaneously, each on their own branch, without stepping on each other's toes.</li>
+                        <li>**Bug Fixes:** If a critical bug is found in the main codebase, you can quickly create a "hotfix" branch, fix the bug, and merge it back, all while ongoing feature development continues on other branches.</li>
+                    </ul>
+                    <p>By default, when you initialize a new Git repository, you start on a branch named `master` (older Git versions) or `main` (newer Git versions and GitHub's default). This is typically considered the main, stable version of your project.</p>
+                </section>
+
+                <section id="branching-list" class="tutorial-section">
+                    <h2>4.2 Listing Branches (`git branch`)</h2>
+                    <p>To see all the branches that exist in your local Git repository, and to know which branch you are currently working on, you use the `git branch` command.</p>
+                    <h3>Demo: Viewing your branches</h3>
+                    <p>Run this command in your terminal:</p>
+                    <pre><code class="bash">git branch</code></pre>
+                    <p class="demo-description">
+                        **Expected Output:**
+                        <pre><code>* master</code></pre>
+                        The asterisk (`*`) indicates that you are currently on the `master` branch. If you had other branches, they would be listed below `master` without an asterisk.
+                    </p>
+                </section>
+
+                <section id="branching-create" class="tutorial-section">
+                    <h2>4.3 Creating Branches (`git branch <branch-name>`)</h2>
+                    <p>To create a new branch, you use the `git branch` command followed by the name you want to give your new branch. This command creates the branch, but it *does not* automatically switch you to it; you remain on your current branch.</p>
+                    <h3>Demo: Making a new feature branch</h3>
+                    <p>Let's create a new branch called `add-quiz-section` to work on integrating a quiz into our tutorial.</p>
+                    <pre><code class="bash">git branch add-quiz-section</code></pre>
+                    <p>Now, list your branches again to confirm it was created:</p>
+                    <pre><code class="bash">git branch</code></pre>
+                    <p class="demo-description">
+                        **Expected Output:**
+                        <pre><code>  add-quiz-section
+* master</code></pre>
+                        You'll see `add-quiz-section` listed, but `* master` confirms you're still on the `master` branch.
+                    </p>
+                </section>
+
+                <section id="branching-switch" class="tutorial-section">
+                    <h2>4.4 Switching Branches (`git checkout <branch-name>`)</h2>
+                    <p>To start working on a different branch, you need to "checkout" that branch. When you checkout a branch, Git updates your working directory to match the files and state of that branch.</p>
+                    <h3>Demo: Moving to your new branch</h3>
+                    <p>Let's switch to the `add-quiz-section` branch we just created:</p>
+                    <pre><code class="bash">git checkout add-quiz-section</code></pre>
+                    <p class="demo-description">
+                        **Expected Output:**
+                        <pre><code>Switched to branch 'add-quiz-section'</code></pre>
+                        Now, verify your current branch using `git branch` again:
+                        <pre><code>* add-quiz-section
+  master</code></pre>
+                        You are now on `add-quiz-section`. Any changes you make and commit from this point will be part of this branch's history, without affecting `master` yet.
+                    </p>
+                    <p><strong>Handy Shortcut: Create and Switch in One Command</strong></p>
+                    <p>A very common and convenient shortcut is to create a new branch and immediately switch to it with a single command:</p>
+                    <pre><code class="bash">git checkout -b new-feature-name</code></pre>
+                    <p class="demo-description">This is equivalent to running `git branch new-feature-name` followed by `git checkout new-feature-name`.</p>
+                </section>
+
+                <section id="branching-merge" class="tutorial-section">
+                    <h2>4.5 Merging Branches (`git merge <branch-to-merge>`)</h2>
+                    <p>Once you've completed your work on a feature branch (like `add-quiz-section`) and you're happy with the changes, you'll want to integrate those changes back into a main branch (like `main` or `master`). This process is called **merging**.</p>
+                    <h3>Demo: Bringing changes together</h3>
+                    <p>1.  **Make changes on your feature branch:** Let's assume you're on `add-quiz-section` and you've added code for the quiz functionality. You would stage and commit these changes like usual.</p>
+                        <pre><code class="bash"># (Make some changes, e.g., edit index.html to add quiz elements)
+# ... code changes ...
+git add index.html
+git commit -m "Implemented basic quiz structure"</code></pre>
+                    <p>2.  **Switch back to the target branch:** To merge changes *into* the `main` (or `master`) branch, you must first be *on* that branch.</p>
+                        <pre><code class="bash">git checkout main</code></pre>
+                    <p>3.  **Perform the merge:** Now, merge the `add-quiz-section` branch into `main`:</p>
+                        <pre><code class="bash">git merge add-quiz-section</code></pre>
+                    <p class="demo-description">
+                        **Expected Output (example of a successful "Fast-forward" merge):**
+                        <pre><code>Updating 4b2f3a1..c7d8e9f
+Fast-forward
+ index.html | 3 +++
+ 1 file changed, 3 insertions(+)</code></pre>
+                        If Git can integrate the changes without any conflicts (meaning no identical lines were changed differently on both branches), it performs a "Fast-forward" merge (if `main` hasn't had new commits since `add-quiz-section` was created). If `main` has diverged, Git will create a "merge commit" to combine the histories. Either way, the changes from `add-quiz-section` are now integrated into `main`.
+                    </p>
+                </section>
+
+                <section id="branching-conflict" class="tutorial-section">
+                    <h2>4.6 Resolving Merge Conflicts</h2>
+                    <p>Sometimes, when you try to merge, Git can't figure out how to combine the changes automatically. This happens when the same lines of code (or text, in the case of articles) have been modified differently in both branches you're trying to merge. This situation is called a **merge conflict**.</p>
+                    <h3>Demo: Handling a conflict</h3>
+                    <p>Let's simulate a conflict and resolve it:</p>
+                    <p>1.  **On `main`:**
+                        <pre><code class="bash">git checkout main</code></pre>
+                        Edit a file (e.g., `index.html`) to change a line:</p>
+                        ```html
+                        <p>Welcome to our **amazing** Git tutorial!</p>
+                        ```
+                        <pre><code class="bash">git add index.html
+git commit -m "Changed welcome message on main"</code></pre>
+                    <p>2.  **On `add-quiz-section`:**
+                        <pre><code class="bash">git checkout add-quiz-section</code></pre>
+                        Edit the *same line* in `index.html` differently:</p>
+                        ```html
+                        <p>Welcome to our **comprehensive** Git tutorial!</p>
+                        ```
+                        <pre><code class="bash">git add index.html
+git commit -m "Updated welcome message on quiz branch"</code></pre>
+                    <p>3.  **Attempt to merge (and create conflict):**
+                        <pre><code class="bash">git checkout main
+git merge add-quiz-section</code></pre>
+                    <p class="demo-description">
+                        **Expected Output (indicating a conflict):**
+                        <pre><code>Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.</code></pre>
+                        Git tells you exactly which file(s) have conflicts.
+                    </p>
+                    <p>4.  **Resolve the Conflict Manually:**
+                        Open `index.html` (the conflicted file) in your text editor. You'll see special "conflict markers" that Git adds to show you the conflicting sections:</p>
+                        <pre><code class="text"># Content of index.html
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+&lt;p&gt;Welcome to our &lt;strong&gt;amazing&lt;/strong&gt; Git tutorial!&lt;/p&gt;
+=======
+&lt;p&gt;Welcome to our &lt;strong&gt;comprehensive&lt;/strong&gt; Git tutorial!&lt;/p&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; add-quiz-section</code></pre>
+                        <ul>
+                            <li>`<<<<<<< HEAD`: Marks the beginning of the changes from your current branch (`main`).</li>
+                            <li>`=======`: Separates the changes from the two conflicting branches.</li>
+                            <li>`>>>>>>> add-quiz-section`: Marks the end of the changes from the branch you're merging (`add-quiz-section`).</li>
+                        </ul>
+                        <p>You need to manually edit the file to resolve the conflict. Decide which version of the code you want to keep, or combine them. For example, you might choose to keep both adjectives:</p>
+                        ```html
+                        <p>Welcome to our **amazing and comprehensive** Git tutorial!</p>
+                        ```
+                        **Crucially, remove all the conflict markers** (`<<<<<<<`, `=======`, `>>>>>>>`).
+                    </p>
+                    <p>5.  **Stage the Resolved File & Commit the Merge:**
+                        After you've manually resolved the conflict and cleaned up the file, stage the file to tell Git the conflict is resolved:</p>
+                        <pre><code class="bash">git add index.html</code></pre>
+                        <p>Then, commit the merge. Git will usually provide a default merge commit message, which you can accept or modify:</p>
+                        <pre><code class="bash">git commit -m "Merge branch 'add-quiz-section' into main, resolving welcome message conflict"</code></pre>
+                        <p class="demo-description">Your conflict is now resolved, and the merge is complete!</p>
+                </section>
+
+                <section id="branching-delete" class="tutorial-section">
+                    <h2>4.7 Deleting Branches (`git branch -d <branch-name>`)</h2>
+                    <p>Once a feature branch has been successfully merged into a main branch (like `main`), its changes are integrated, and the branch itself might no longer be needed. It's good practice to delete merged branches to keep your repository clean and organized.</p>
+                    <h3>Demo: Cleaning up your branches</h3>
+                    <p>After merging `add-quiz-section` into `main`, you can delete the local `add-quiz-section` branch:</p>
+                    <pre><code class="bash">git branch -d add-quiz-section</code></pre>
+                    <p class="demo-description">
+                        **Expected Output:**
+                        <pre><code>Deleted branch add-quiz-section (was c7d8e9f).</code></pre>
+                        <ul>
+                            <li>The `-d` flag is a "safe" delete. Git will only delete the branch if all its commits have been fully merged into its upstream branch (usually `main`). This prevents accidental loss of unmerged work.</li>
+                            <li>If you ever need to force the deletion of an unmerged branch (use this with extreme caution and only if you're sure you don't need its changes!), you can use the `-D` flag: `git branch -D my-unfinished-branch`.</li>
+                        </ul>
+                        Remember, deleting a local branch doesn't delete it from a remote (like GitHub). We'll cover deleting remote branches later.
+                    </p>
+                </section>
+
+                <section id="remote-create" class="tutorial-section">
+                    <h2>5.1 Creating a GitHub Repository</h2>
+                    <p>Now that you're comfortable with Git locally, let's connect your work to GitHub! GitHub will serve as the central, cloud-based home for your repositories, making it easy to share your work, collaborate, and back it up.</p>
+                    <h3>Steps to Create a New Repository on GitHub:</h3>
+                    <ol>
+                        <li>Go to <a href="https://github.com" target="_blank">github.com</a> in your web browser and sign in to your GitHub account (or create one if you haven't already).</li>
+                        <li>In the top-right corner, click the `+` sign and select **"New repository."**</li>
+                        <li>**Repository Name:** Give your repository a clear and descriptive name (e.g., `my-tech-tutorial-repo`). This will be the name of your project on GitHub.</li>
+                        <li>**Description (Optional):** Add a brief description of your project.</li>
+                        <li>**Public or Private:** Choose whether your repository should be `Public` (anyone can see it, ideal for open-source projects or tutorials) or `Private` (only you and collaborators you invite can see it).</li>
+                        <li>**Initialize this repository with a README:** This is a crucial step! If you are linking an *existing local repository* (which is what we'll do), **do NOT check this option**. You want an empty remote repository that you can push your existing local files into. If you check it, GitHub will create its own first commit, and you'll have to deal with merging histories later.</li>
+                        <li>Click the **"Create repository"** button.</li>
+                    </ol>
+                    <p class="demo-description">After creation, GitHub will display a page with instructions on how to set up your repository, including the remote URL. Keep this page open as you'll need the URL for the next step!</p>
+                </section>
+
+                <section id="remote-connect" class="tutorial-section">
+                    <h2>5.2 Connecting Local to Remote (`git remote`)</h2>
+                    <p>After creating an empty repository on GitHub, you need to tell your local Git repository about its remote counterpart. This creates a link between your local project and its cloud-based home.</p>
+                    <h3>Demo: Linking your local and remote repositories</h3>
+                    <p>Go back to your terminal, in your local project directory. You'll use the URL that GitHub provided after you created the new repository (it typically looks like `https://github.com/your-username/your-repo-name.git`).</p>
+                    <pre><code class="bash"># Replace <your-username> and <your-repo-name> with your actual details
+git remote add origin https://github.com/your-username/your-repo-name.git</code></pre>
+                    <ul>
+                        <li>`git remote add`: This command tells Git to add a new remote connection.</li>
+                        <li>`origin`: This is a standard and conventional alias (short name) given to your primary remote repository. While you could name it anything, `origin` is widely recognized and used by developers.</li>
+                        <li>`<URL>`: This is the full URL to your GitHub repository (either HTTPS or SSH, usually HTTPS is easier to start with).</li>
+                    </ul>
+                    <p>To verify that your remote connection has been set up correctly, you can list your remote repositories:</p>
+                    <pre><code class="bash">git remote -v</code></pre>
+                    <p class="demo-description">
+                        **Expected Output:**
+                        <pre><code>origin  https://github.com/your-username/your-repo-name.git (fetch)
+origin  https://github.com/your-username/your-repo-name.git (push)</code></pre>
+                        This confirms that `origin` is correctly configured for both fetching (downloading changes) and pushing (uploading changes).
+                    </p>
+                </section>
+
+                <section id="remote-push" class="tutorial-section">
+                    <h2>5.3 Pushing Changes (`git push`)</h2>
+                    <p>Once your local repository is connected to its remote on GitHub, you'll want to send your committed local changes to the remote. This makes your work visible to others (if it's a public repo) and backs up your progress in the cloud. This action is called **pushing**.</p>
+                    <h3>Demo: Sending your first changes to GitHub</h3>
+                    <p>To push your local `main` (or `master`) branch to the `origin` remote:</p>
+                    <pre><code class="bash">git push -u origin main</code></pre>
+                    <ul>
+                        <li>`git push`: The command to upload your local commits.</li>
+                        <li>`origin`: The name of the remote repository you're pushing to.</li>
+                        <li>`main`: The local branch you want to push. If your default local branch is `master`, use `git push -u origin master`.</li>
+                        <li>`-u` (or `--set-upstream`): This flag is very important, but you only use it *the first time* you push a new branch. It tells Git to set up a tracking relationship between your local `main` branch and the `main` branch on `origin`. After this initial push, you can simply use `git push` without specifying `origin main` for that branch.</li>
+                    </ul>
+                    <p class="demo-description">When you run `git push`, you will likely be prompted for your GitHub username and password. However, **GitHub no longer accepts password-based authentication for Git operations for enhanced security.** You must use a **Personal Access Token (PAT)** instead.</p>
+                </section>
+
+                <section id="remote-pat" class="tutorial-section">
+                    <h2>5.4 Personal Access Tokens (PATs)</h2>
+                    <p>Since GitHub has deprecated password authentication for Git command-line operations, you now need to use a **Personal Access Token (PAT)**. A PAT is a more secure, granularly-scoped alternative to your regular GitHub password.</p>
+                    <h3>How to Generate a Personal Access Token (PAT) on GitHub:</h3>
+                    <ol>
+                        <li>Go to <a href="https://github.com" target="_blank">github.com</a> and log in to your account.</li>
+                        <li>Click your **profile picture** (top right corner of the page) -> select **Settings**.</li>
+                        <li>In the left sidebar, scroll down and click on **Developer settings**.</li>
+                        <li>Under "Personal access tokens", select **Tokens (classic)**.</li>
+                        <li>Click the **"Generate new token"** dropdown and then choose **"Generate new token (classic)."** (There's also a newer "Fine-grained tokens" option, but "classic" is simpler for general repository access).</li>
+                        <li>**Note:** You might be prompted to confirm your GitHub password.</li>
+                        <li>**Note:** Give your token a descriptive name (e.g., "Git CLI Token for Radha 's Laptop"). This helps you remember what it's for.</li>
+                        <li>**Expiration:** Set an expiration date. For better security, it's recommended to choose a limited expiration (e.g., 90 days, 1 year) rather than "No expiration."</li>
+                        <li>**Scopes:** This is critical! You need to select the permissions the token will have. For general repository operations, check the **`repo`** scope (this grants full control of private repositories as well). You can select more granular permissions if you know exactly what you need, but `repo` is sufficient for most development tasks.</li>
+                        <li>Click **"Generate token"** at the bottom of the page.</li>
+                        <li>**VERY IMPORTANT:** **Copy the generated token immediately!** GitHub will only show you the token once, right after it's generated. If you navigate away from the page, you will not be able to retrieve it again. Store it securely (e.g., in a password manager, or use Git credential manager).</li>
+                    </ol>
+                    <p class="demo-description">From now on, when Git prompts you for a password during `git push` or `git pull` from the command line, paste this Personal Access Token instead of your GitHub account password.</p>
+                </section>
+
+                <section id="remote-pull" class="tutorial-section">
+                    <h2>5.5 Pulling Changes (`git pull`)</h2>
+                    <p>When you're collaborating with others (or even working on the same project from different computers), changes might be pushed to the remote repository (GitHub) by someone else. To get those changes onto your local machine, you need to **pull** them.</p>
+                    <p>The `git pull` command is a convenient combination of two operations:</p>
+                    <ol>
+                        <li>**`git fetch`**: Downloads all the latest commits, files, and references from the remote repository to your local Git repository. It updates your local copy of the remote's branches (e.g., `origin/main`), but it *doesn't* merge them into your current working branch.</li>
+                        <li>**`git merge`**: Integrates (merges) the downloaded changes from the remote tracking branch into your current local branch.</li>
+                    </ol>
+                    <p>So, `git pull` effectively fetches the new changes and then merges them into your current working branch.</p>
+                    <h3>Demo: Getting the latest updates</h3>
+                    <p>To pull changes from the `main` branch of your `origin` remote:</p>
+                    <pre><code class="bash">git pull origin main</code></pre>
+                    <p class="demo-description">
+                        **When to use it:** Always run `git pull origin main` (or the relevant branch) before you start new work on a branch, or before you `git push` your own changes. This ensures your local copy is up-to-date and helps minimize merge conflicts.
+                    </p>
+                </section>
+
+                <section id="remote-clone" class="tutorial-section">
+                    <h2>5.6 Cloning Repositories (`git clone`)</h2>
+                    <p>If you want to get a complete copy of an existing remote Git repository (e.g., an open-source project you found on GitHub, or a project I started), you use the `git clone` command. This command does more than just download the files; it downloads the *entire Git history* of the project and automatically sets up a connection to the original remote repository.</p>
+                    <h3>Demo: Getting a copy of an existing project</h3>
+                    <p>1.  **Find a Repository:** Go to GitHub and find a repository you want to clone. Click the **"Code"** button and copy the HTTPS or SSH URL.</p>
+                    <p>2.  **Clone it:** Open your terminal in the directory where you want the project to be saved (e.g., your `Documents/dev` folder). Then run:</p>
+                    <pre><code class="bash">git clone https://github.com/some-user/some-project.git</code></pre>
+                    <p class="demo-description">
+                        This command will create a new directory (named `some-project` in this example) containing all the project files and the complete Git history. Git also automatically sets up the `origin` remote pointing back to the repository you cloned from, so you can easily pull and push changes.
+                        You can then `cd some-project` to enter the newly cloned directory and start working.
+                    </p>
+                </section>
+
+                <section id="interview-questions" class="tutorial-section">
+                    <h2>📋 Git & GitHub Interview Questions</h2>
+                    <p>These are some common Git and GitHub questions you might encounter in interviews. Understanding these concepts deeply will show your proficiency!</p>
+                    <div class="faq-container">
+                        <div class="faq-item">
+                            <h3>1. What is the difference between Git and GitHub?</h3>
+                            <p class="answer">**Git** is a distributed version control system (DVCS) that tracks changes in source code during software development. It's a command-line tool installed locally on your machine. **GitHub** is a web-based platform that provides hosting for Git repositories, along with powerful collaboration features like pull requests, issue tracking, and code review. Think of Git as the underlying version control *engine*, and GitHub as a popular online platform that *uses* Git to facilitate teamwork and project hosting.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h3>2. Explain the three states of Git.</h3>
+                            <p class="answer">Git operates with three main states for your files:
+                                <ul>
+                                    <li>**Working Directory:** This is where you currently modify your files. Any changes here are not yet tracked by Git.</li>
+                                    <li>**Staging Area (or Index):** This is an intermediate area where you prepare changes for your next commit. You explicitly `git add` files to this area, indicating what changes you want to include in the upcoming snapshot.</li>
+                                    <li>**Git Repository:** This is the hidden `.git` directory where Git permanently stores all the committed versions (snapshots) of your project's history.</li>
+                                </ul>
+                            </p>
+                        </div>
+                        <div class="faq-item">
+                            <h3>3. What is a Git commit? What makes a good commit message?</h3>
+                            <p class="answer">A **commit** is a snapshot of your project's state at a specific point in time. It records the changes that are currently in your staging area into your local Git repository, creating a permanent point in your project's history.
+                                <br><br>A good commit message is:
+                                <ul>
+                                    <li>**Concise:** Starts with a single, clear summary line (usually 50-72 characters max).</li>
+                                    <li>**Imperative Mood:** Written in the imperative mood (e.g., "Fix bug," "Add user authentication," not "Fixed bug" or "Adding user authentication").</li>
+                                    <li>**Descriptive:** After a blank line following the summary, it can include a more detailed explanation of *why* the change was made, the problem it solves, or any relevant context.</li>
+                                </ul>
+                            </p>
+                        </div>
+                         <div class="faq-item">
+                            <h3>4. What is the purpose of Git branches?</h3>
+                            <p class="answer">Git **branches** are fundamental to collaborative development and safe experimentation. They allow developers to create independent lines of development that diverge from the main codebase. This means you can work on new features, bug fixes, or experimental ideas without affecting the stable, primary version of your project. Once the work on a branch is complete and stable, it can be merged back into the main branch, integrating the changes.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h3>5. How do you resolve a merge conflict in Git?</h3>
+                            <p class="answer">A **merge conflict** occurs when Git cannot automatically reconcile changes made to the same lines of code in different branches during a merge operation. To resolve it:
+                                <ol>
+                                    <li>Git will mark the conflicted file(s) and add special `<<<<<<<`, `=======`, and `>>>>>>>` markers within the file to highlight the conflicting sections.</li>
+                                    <li>Manually open the conflicted file(s) in a text editor.</li>
+                                    <li>Edit the file to choose which changes to keep, or combine them as needed, removing all the conflict markers.</li>
+                                    <li>After resolving, stage the file(s) using `git add <file>`.</li>
+                                    <li>Finally, create a new commit (`git commit`) to record the merge resolution.</li>
+                                </ol>
+                            </p>
+                        </div>
+                        <div class="faq-item">
+                            <h3>6. What is the difference between `git pull` and `git fetch`?</h3>
+                            <p class="answer">
+                                <ul>
+                                    <li>`git fetch` is used to download commits, files, and refs from a remote repository to your local repository. It updates your local copy of the remote's branches (e.g., `origin/main`), but it *does not* automatically merge these changes into your current local working branch. It's a "safe" way to see what's new on the remote without altering your current local work.</li>
+                                    <li>`git pull` is a convenience command that combines two operations: first, it performs a `git fetch` to download changes from the remote, and then it automatically performs a `git merge` to integrate those downloaded changes into your current local branch.</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="quiz-section" class="tutorial-section">
+                    <h2>❓ Test Your Git & GitHub Knowledge!</h2>
+                    <p>Ready to see how much you've learned? Take this short quiz. Upon completion, you can generate a personalized certificate with your score!</p>
+                    <form id="quizForm">
+                        <div class="form-group">
+                            <label for="userName">Your Name:</label>
+                            <input type="text" id="userName" required placeholder="Radha ">
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail">Your Email:</label>
+                            <input type="email" id="userEmail" required placeholder="Radha .agrahari@example.com">
+                        </div>
+
+                        <div class="quiz-questions">
+                            <h3>Question 1: What is Git primarily?</h3>
+                            <label><input type="radio" name="q1" value="a"> A web hosting platform</label><br>
+                            <label><input type="radio" name="q1" value="b"> A text editor</label><br>
+                            <label><input type="radio" name="q1" value="c"> A Distributed Version Control System</label><br>
+                            <label><input type="radio" name="q1" value="d"> A programming language</label><br>
+
+                            <h3>Question 2: Which Git command is used to stage changes?</h3>
+                            <label><input type="radio" name="q2" value="a"> `git commit`</label><br>
+                            <label><input type="radio" name="q2" value="b"> `git push`</label><br>
+                            <label><input type="radio" name="q2" value="c"> `git add`</label><br>
+                            <label><input type="radio" name="q2" value="d"> `git status`</label><br>
+                            
+                            <h3>Question 3: What does `git pull` do?</h3>
+                            <label><input type="radio" name="q3" value="a"> Uploads local changes to remote</label><br>
+                            <label><input type="radio" name="q3" value="b"> Downloads changes from remote and merges them</label><br>
+                            <label><input type="radio" name="q3" value="c"> Creates a new branch</label><br>
+                            <label><input type="radio" name="q3" value="d"> Shows commit history</label><br>
+
+                            <h3>Question 4: What is a Personal Access Token (PAT) used for in GitHub?</h3>
+                            <label><input type="radio" name="q4" value="a"> To send emails</label><br>
+                            <label><input type="radio" name="q4" value="b"> For secure authentication for Git operations</label><br>
+                            <label><input type="radio" name="q4" value="c"> To store private keys</label><br>
+                            <label><input type="radio" name="q4" value="d"> To track website visitors</label><br>
+                        </div>
+                        
+                        <button type="submit" class="submit-quiz-btn">Submit Quiz</button>
+                    </form>
+                    <div id="quizResult" class="quiz-result"></div>
+                    <button id="downloadCertBtn" class="download-btn" style="display: none;">Download Certificate</button>
+                </section>
+
+            </div>
+
+            <div class="pagination">
+                <button id="prevBtn" class="pagination-btn" disabled>Previous</button>
+                <button id="nextBtn" class="pagination-btn">Next</button>
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Git & GitHub Mastery Tutorial. All rights reserved. | Curated with care by Radh Rani</p>
+        <div class="feedback-section">
+            <h3>Share Your Feedback!</h3>
+            <form id="feedbackForm">
+                <textarea id="feedbackText" placeholder="Your valuable feedback here..." rows="3" required></textarea><br>
+                <button type="submit" class="feedback-submit-btn">Submit Feedback</button>
+            </form>
+            <div id="feedbackDisplay" class="feedback-display">
+                <h4>Recent Feedback:</h4>
+                </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        /* --- JavaScript Goes Here --- */
+        // --- Global Variables & Initial Setup ---
+        const coverPage = document.getElementById('coverPage');
+        const startTutorialBtn = document.getElementById('startTutorialBtn');
+        const tutorialApp = document.getElementById('tutorialApp');
+        const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+        const sidebar = document.querySelector('.sidebar');
+        const menuTitles = document.querySelectorAll('.menu-title');
+        const tutorialSections = document.querySelectorAll('.tutorial-section');
+        const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+        const sectionTitle = document.getElementById('sectionTitle');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        let currentSectionIndex = 0; // Tracks the current active section
+
+        // --- Audio Controls ---
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const volumeSlider = document.getElementById('volumeSlider');
+
+        // Quiz elements
+        const quizForm = document.getElementById('quizForm');
+        const quizResult = document.getElementById('quizResult');
+        const downloadCertBtn = document.getElementById('downloadCertBtn');
+
+        // Feedback elements
+        const feedbackForm = document.getElementById('feedbackForm');
+        const feedbackText = document.getElementById('feedbackText');
+        const feedbackDisplay = document.getElementById('feedbackDisplay');
+
+        // Quiz Questions and Answers (Hardcoded for simplicity)
+        const quizQuestions = [
+            {
+                question: "What is Git primarily?",
+                answers: {
+                    a: "A web hosting platform",
+                    b: "A text editor",
+                    c: "A Distributed Version Control System",
+                    d: "A programming language"
+                },
+                correct: "c"
+            },
+            {
+                question: "Which Git command is used to stage changes?",
+                answers: {
+                    a: "`git commit`",
+                    b: "`git push`",
+                    c: "`git add`",
+                    d: "`git status`"
+                },
+                correct: "c"
+            },
+            {
+                question: "What does `git pull` do?",
+                answers: {
+                    a: "Uploads local changes to remote",
+                    b: "Downloads changes from remote and merges them",
+                    c: "Creates a new branch",
+                    d: "Shows commit history"
+                },
+                correct: "b"
+            },
+            {
+                question: "What is a Personal Access Token (PAT) used for in GitHub?",
+                answers: {
+                    a: "To send emails",
+                    b: "For secure authentication for Git operations",
+                    c: "To store private keys",
+                    d: "To track website visitors"
+                },
+                correct: "b"
+            }
+        ];
+
+        // --- Functions ---
+
+        function showSection(index) {
+            // Hide all sections
+            tutorialSections.forEach(section => section.classList.remove('active'));
+            // Show the desired section
+            tutorialSections[index].classList.add('active');
+
+            // Update section title in header
+            sectionTitle.textContent = tutorialSections[index].querySelector('h2, h1').textContent;
+
+            // Update active link in sidebar
+            sidebarLinks.forEach(link => link.classList.remove('active'));
+            const currentSectionId = tutorialSections[index].id;
+            const activeLink = document.querySelector(`.sidebar-nav a[data-section="${currentSectionId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+                // Ensure parent submenu is expanded
+                let parentSubmenu = activeLink.closest('.submenu');
+                if (parentSubmenu && !parentSubmenu.classList.contains('expanded')) {
+                    parentSubmenu.classList.add('expanded');
+                    // Also update arrow for its parent menu-title
+                    let parentMenuTitle = parentSubmenu.previousElementSibling;
+                    if (parentMenuTitle) {
+                        parentMenuTitle.querySelector('.arrow').textContent = '▲'; // Change to up arrow
+                    }
+                }
+            }
+
+            // Update pagination buttons
+            prevBtn.disabled = (index === 0);
+            nextBtn.disabled = (index === tutorialSections.length - 1);
+
+            // Scroll content area to top for new section
+            document.querySelector('.content-area').scrollTop = 0;
+
+            currentSectionIndex = index;
+        }
+
+        function navigateSections(direction) {
+            let newIndex = currentSectionIndex + direction;
+            if (newIndex >= 0 && newIndex < tutorialSections.length) {
+                showSection(newIndex);
+            }
+        }
+
+        function handleQuizSubmission(event) {
+            event.preventDefault();
+            const userName = document.getElementById('userName').value;
+            const userEmail = document.getElementById('userEmail').value;
+
+            let score = 0;
+            const totalQuestions = quizQuestions.length;
+
+            quizQuestions.forEach((q, index) => {
+                const selectedAnswer = document.querySelector(`input[name="q${index + 1}"]:checked`);
+                if (selectedAnswer && selectedAnswer.value === q.correct) {
+                    score++;
+                }
+            });
+
+            const percentage = (score / totalQuestions) * 100;
+            quizResult.innerHTML = `You scored ${score} out of ${totalQuestions} (${percentage.toFixed(2)}%).`;
+            quizResult.classList.add('show');
+            downloadCertBtn.style.display = 'block'; // Show download button
+
+            // You can also display a message based on score
+            if (percentage >= 75) {
+                quizResult.innerHTML += `<p>Fantastic job, ${userName}! You've truly grasped the concepts!</p>`;
+            } else {
+                quizResult.innerHTML += `<p>No worries, ${userName}! Keep practicing, review the tutorial sections, and try again!</p>`;
+            }
+        }
+
+
+        function generateCertificate(name, email, score, total) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFont('helvetica');
+            doc.setFontSize(30);
+            doc.setTextColor('#0056b3');
+            doc.text('Certificate of Completion', 105, 50, null, null, 'center');
+
+            doc.setFontSize(20);
+            doc.setTextColor('#343a40');
+            doc.text('This certifies that', 105, 70, null, null, 'center');
+
+            doc.setFontSize(28);
+            doc.setTextColor('#28a745');
+            doc.text(name, 105, 90, null, null, 'center');
+
+            doc.setFontSize(20);
+            doc.setTextColor('#343a40');
+            doc.text('has successfully completed the', 105, 110, null, null, 'center');
+
+            doc.setFontSize(24);
+            doc.setTextColor('#007bff');
+            doc.text('Git & GitHub Mastery Tutorial', 105, 130, null, null, 'center');
+
+            doc.setFontSize(16);
+            doc.setTextColor('#6c757d');
+            doc.text(`Email: ${email}`, 105, 145, null, null, 'center');
+            doc.text(`Score: ${score} out of ${total} (${((score / total) * 100).toFixed(2)}%)`, 105, 155, null, null, 'center');
+
+            doc.setFontSize(14);
+            doc.setTextColor('#6c757d');
+            doc.text('Date: ' + new Date().toLocaleDateString(), 105, 175, null, null, 'center');
+
+            doc.setFontSize(16);
+            doc.setTextColor('#0056b3');
+            doc.text('Curated with care by Radh Rani', 105, 200, null, null, 'center');
+            doc.text('Your Personal Instructor', 105, 210, null, null, 'center');
+
+            // Add a simple border
+            doc.setDrawColor('#0056b3');
+            doc.setLineWidth(1.5);
+            doc.rect(20, 20, 170, 250); // x, y, width, height
+
+            doc.save(`${name.replace(/\s/g, '_')}_Git_GitHub_Certificate.pdf`);
+        }
+
+        function handleFeedbackSubmission(event) {
+            event.preventDefault();
+            const feedback = feedbackText.value.trim();
+            if (feedback) {
+                const feedbackItem = document.createElement('div');
+                feedbackItem.classList.add('feedback-item');
+                feedbackItem.innerHTML = `<p>"${feedback}"</p><small>Submitted: ${new Date().toLocaleString()}</small>`;
+                feedbackDisplay.prepend(feedbackItem); // Add new feedback at the top
+
+                feedbackText.value = ''; // Clear the textarea
+            }
+        }
+
+
+        // --- Event Listeners ---
+
+        // Start Tutorial Button
+        startTutorialBtn.addEventListener('click', () => {
+            coverPage.classList.remove('active');
+            tutorialApp.classList.add('active');
+            // Initialize with the home section
+            showSection(0);
+        });
+
+        // Sidebar Toggle Button
+        sidebarToggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+
+        // Collapsible Menu Titles (for submenus)
+        menuTitles.forEach(title => {
+            title.addEventListener('click', () => {
+                const targetId = title.dataset.target;
+                const submenu = document.getElementById(targetId);
+                if (submenu) {
+                    submenu.classList.toggle('expanded');
+                    const arrow = title.querySelector('.arrow');
+                    arrow.textContent = submenu.classList.contains('expanded') ? '▲' : '▼';
+                }
+            });
+        });
+
+        // Sidebar Navigation Links
+        sidebarLinks.forEach((link, index) => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent default anchor behavior
+                const sectionId = link.dataset.section;
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    // Find the index of the clicked section
+                    const targetIndex = Array.from(tutorialSections).indexOf(section);
+                    if (targetIndex !== -1) {
+                        showSection(targetIndex);
+                    }
+                }
+                // If the sidebar is collapsed, expand it when a link is clicked
+                if (sidebar.classList.contains('collapsed')) {
+                     sidebar.classList.remove('collapsed');
+                }
+            });
+        });
+
+        // Pagination Buttons
+        nextBtn.addEventListener('click', () => navigateSections(1));
+        prevBtn.addEventListener('click', () => navigateSections(-1));
+
+        // Quiz Submission
+        quizForm.addEventListener('submit', handleQuizSubmission);
+
+        // Download Certificate Button
+        downloadCertBtn.addEventListener('click', () => {
+            const userName = document.getElementById('userName').value;
+            const userEmail = document.getElementById('userEmail').value;
+            let score = 0;
+            quizQuestions.forEach((q, index) => {
+                const selectedAnswer = document.querySelector(`input[name="q${index + 1}"]:checked`);
+                if (selectedAnswer && selectedAnswer.value === q.correct) {
+                    score++;
+                }
+            });
+            generateCertificate(userName, userEmail, score, quizQuestions.length);
+        });
+
+
+        // Feedback Form Submission
+        feedbackForm.addEventListener('submit', handleFeedbackSubmission);
+
+
+        // Audio Controls
+        playPauseBtn.addEventListener('click', () => {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+                playPauseBtn.textContent = '⏸️ Pause';
+            } else {
+                backgroundMusic.pause();
+                playPauseBtn.textContent = '▶️ Play';
+            }
+        });
+
+        volumeSlider.addEventListener('input', () => {
+            backgroundMusic.volume = volumeSlider.value;
+        });
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            coverPage.classList.add('active'); // Show cover page initially
+            // Pre-select the home link in the sidebar initially
+            const homeLink = document.querySelector('.sidebar-nav a[data-section="home"]');
+            if(homeLink) {
+                homeLink.classList.add('active');
+            }
+            // Set initial volume for music
+            backgroundMusic.volume = volumeSlider.value;
+
+            // Optional: Hide audio controls until tutorial starts or after a short delay
+            // For now, they are visible from the start.
+        });
+    </script>
+</body>
+</html>
